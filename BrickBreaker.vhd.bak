@@ -1,0 +1,47 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity Lab1 is
+	generic (
+		N : integer := 10
+	);
+	
+
+	port(
+	ADC_CLK_10 	: std_logic;
+	MAX10_CLK1_50 : std_logic;
+	MAX10_CLK2_50 : std_logic;
+
+	KEY : in std_logic_vector(1 downto 0);
+	
+	LEDR : out unsigned(9 downto 0)
+	);
+end entity Lab1;
+
+
+architecture behavioral of Lab1 is
+
+	signal sum : unsigned((N-1) downto 0);
+	signal ticks: integer;
+
+begin
+
+	process (MAX10_CLK1_50, KEY)
+	begin
+		if KEY(0) = '0' then
+			sum <= (others => '0');
+			ticks <= 0;
+		elsif rising_edge(MAX10_CLK1_50) then
+			if ticks < 50000000 then
+				ticks <= ticks + 1;
+			else
+				ticks <= 0;
+				sum <= sum + 1;
+			end if;
+		end if;
+	end process;
+	
+	LEDR <= sum;
+	
+end architecture behavioral;

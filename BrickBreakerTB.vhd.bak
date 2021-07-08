@@ -1,0 +1,106 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity Lab5TB is
+end entity Lab5TB;
+
+architecture behavioral of Lab5TB is
+	component Lab5
+		generic (
+			N : integer := 10
+		);
+		
+
+		port(
+		ADC_CLK_10 	: std_logic;
+		MAX10_CLK1_50 : std_logic;
+		MAX10_CLK2_50 : std_logic;
+
+		KEY : in std_logic_vector(1 downto 0);
+		
+		HEX0: out std_logic_vector(7 downto 0);		
+		HEX1: out std_logic_vector(7 downto 0);	
+		HEX2: out std_logic_vector(7 downto 0);	
+		HEX3: out std_logic_vector(7 downto 0);	
+		HEX4: out std_logic_vector(7 downto 0);	
+		HEX5: out std_logic_vector(7 downto 0);
+		
+		LEDR : out unsigned(9 downto 0);
+		
+		SW : in std_logic_vector(9 downto 0)
+		);
+	end component Lab5;
+
+	signal clk: std_logic := '0';
+	signal KEY: std_logic_vector(1 downto 0) := "11";
+	signal HEX0: std_logic_vector(7 downto 0) := "11111111";
+	signal HEX1: std_logic_vector(7 downto 0) := "11111111";
+	signal HEX2: std_logic_vector(7 downto 0) := "11111111";
+	signal HEX3: std_logic_vector(7 downto 0) := "11111111";
+	signal HEX4: std_logic_vector(7 downto 0) := "11111111";
+	signal HEX5: std_logic_vector(7 downto 0) := "11111111";
+	signal LEDR: unsigned(9 downto 0) := "0000000000";
+	signal SW: std_logic_vector(9 downto 0) := "0000000000";
+	constant CLK_PERIOD : time := 10 ps;
+
+begin
+
+	clk_process : process
+	begin
+		clk <= '0';
+		wait for CLK_PERIOD / 2;
+		clk <= '1';
+		wait for CLK_PERIOD/2;
+	end process;
+	
+	stm_process : process
+	begin
+		KEY <= "11";
+		SW <= "0000001111";
+		wait for CLK_PERIOD * 10;
+		KEY <= "01";
+		wait for CLK_PERIOD * 100;
+		KEY <= "11";
+		SW <= "0011110000";
+		wait for CLK_PERIOD * 10;
+		KEY <= "01";
+		wait for CLK_PERIOD * 100;
+		KEY <= "11";
+		SW <= "1100000000";
+		wait for CLK_PERIOD * 10;
+		KEY <= "01";
+		wait for CLK_PERIOD * 100;
+		KEY <= "11";
+		SW <= "1111111111";
+		wait for CLK_PERIOD * 10;
+		KEY <= "01";
+		wait for CLK_PERIOD * 100;
+		KEY <= "10";
+		wait for CLK_PERIOD * 100;
+
+		wait;
+	end process;
+	
+	uut : Lab5
+		generic map(
+			N => 10
+		)
+		port map(
+			MAX10_CLK1_50 => clk,
+			ADC_CLK_10 => '0',
+			MAX10_CLK2_50 => '0',
+			KEY => KEY,
+			HEX0 => HEX0,
+			HEX1 => HEX1,
+			HEX2 => HEX2,
+			HEX3 => HEX3,
+			HEX4 => HEX4,
+			HEX5 => HEX5,
+			LEDR => LEDR,
+			SW => SW
+		);
+	
+	
+end architecture behavioral;
+
